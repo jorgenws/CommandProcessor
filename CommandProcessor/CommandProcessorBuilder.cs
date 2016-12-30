@@ -10,7 +10,7 @@ namespace CommandProcessor
     public class CommandProcessorBuilder : IAddAssemblies, ISetEventStore, ICommandProcessorBuilder
     {
         private IEnumerable<Assembly> _assemblies;
-        private IEventStore _eventStore;
+        private Type _eventStore;
 
         public ISetEventStore AddAssemblies(IEnumerable<Assembly> assemblies)
         {
@@ -18,9 +18,9 @@ namespace CommandProcessor
             return this;
         }
 
-        public ICommandProcessorBuilder SetEventStore(IEventStore eventStore)
+        public ICommandProcessorBuilder SetEventStoreType<T>() where T : IEventStore
         {
-            _eventStore = eventStore;
+            _eventStore = typeof(T);
             return this;
         }
 
@@ -34,15 +34,14 @@ namespace CommandProcessor
             var commandHandlers = commandHandlerMap.Values.Distinct();
 
             foreach (var commandHandler in commandHandlers)
-                builder.RegisterType(commandHandler);
+                builder.RegisterType(commandHandler).AsSelf();
 
             var dependencies = DependenciesFactory.Create(_assemblies);
 
             foreach (var dependency in dependencies)
                 dependency.Add(builder);
 
-            //Look more into how to register the event store to make it available to be per call not a singleton.
-            //builder.RegisterInstance<IEventStore>(_eventStore);
+            builder.RegisterType(_eventStore).As<IEventStore>();
 
             var container = builder.Build();
           
@@ -59,7 +58,7 @@ namespace CommandProcessor
 
     public interface ISetEventStore
     {
-         ICommandProcessorBuilder SetEventStore(IEventStore eventStore);
+         ICommandProcessorBuilder SetEventStoreType<T>() where T : IEventStore;
     }
 
     public interface ICommandProcessorBuilder
