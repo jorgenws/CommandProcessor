@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace CommandProcessor
 {
-    public class CommandProcessorBuilder : IAddAssemblies, ISetEventStore, ICommandProcessorBuilder
+    public class CommandProcessorBuilder : ICommandProcessorBuilder, ISetEventStore, ICommandProcessorBuild
     {
         private IEnumerable<Assembly> _assemblies;
         private Type _eventStore;
@@ -18,7 +18,7 @@ namespace CommandProcessor
             return this;
         }
 
-        public ICommandProcessorBuilder SetEventStoreType<T>() where T : IEventStore
+        public ICommandProcessorBuild SetEventStoreType<T>() where T : IEventStore
         {
             _eventStore = typeof(T);
             return this;
@@ -51,17 +51,17 @@ namespace CommandProcessor
         }
     }
 
-    public interface IAddAssemblies
+    public interface ICommandProcessorBuilder
     {
          ISetEventStore AddAssemblies(IEnumerable<Assembly> assemblies);
     }
 
     public interface ISetEventStore
     {
-         ICommandProcessorBuilder SetEventStoreType<T>() where T : IEventStore;
+         ICommandProcessorBuild SetEventStoreType<T>() where T : IEventStore;
     }
 
-    public interface ICommandProcessorBuilder
+    public interface ICommandProcessorBuild
     {
         IProcessor Build();
     }

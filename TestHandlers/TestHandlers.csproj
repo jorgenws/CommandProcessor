@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{540E8D1A-A21E-49EC-A7B5-2783F9646357}</ProjectGuid>
+    <ProjectGuid>{997E7100-A96A-45DA-B770-FED14238A18F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CommandProcessorTests</RootNamespace>
-    <AssemblyName>CommandProcessorTests</AssemblyName>
+    <RootNamespace>TestHandlers</RootNamespace>
+    <AssemblyName>TestHandlers</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,14 +30,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="nunit.framework, Version=3.5.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
-      <HintPath>..\packages\NUnit.3.5.0\lib\net45\nunit.framework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -48,31 +40,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommandToHandlerMapFactoryTests.cs" />
-    <Compile Include="DependenciesFactoryTests.cs" />
-    <Compile Include="ProcessorTests.cs" />
+    <Compile Include="TestCommandHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TypeFinderTests.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BaseTypes\BaseTypes.csproj">
       <Project>{4307f378-c21d-484f-9eb6-c691222ab7e1}</Project>
       <Name>BaseTypes</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CommandProcessor\CommandProcessor.csproj">
-      <Project>{b044eb01-367b-4eb3-9ae5-27f86ce4c410}</Project>
-      <Name>CommandProcessor</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TestHandlers\TestHandlers.csproj">
-      <Project>{997e7100-a96a-45da-b770-fed14238a18f}</Project>
-      <Name>TestHandlers</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

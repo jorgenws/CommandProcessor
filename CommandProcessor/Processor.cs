@@ -32,7 +32,7 @@ namespace CommandProcessor
             int addingFailureCounter = 0;
             bool addingToExistingSuccess = false;
             bool addingNewSuccess = false;
-            while (!addingToExistingSuccess && !addingNewSuccess && addingFailureCounter > 5)
+            while (!addingToExistingSuccess && !addingNewSuccess && addingFailureCounter < 5)
             {
                 addingToExistingSuccess = TryAddingToExisitingHandler(commandTask);
                 if(!addingToExistingSuccess)
