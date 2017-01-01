@@ -7,9 +7,9 @@ using System.Reflection;
 
 namespace CommandProcessor
 {
-    internal static class DependenciesFactory
+    internal class DependenciesFactory
     {
-        public static IEnumerable<IDependencies> Create(IEnumerable<Assembly> assemblies)
+        public IEnumerable<IDependencies> Create(IEnumerable<Assembly> assemblies)
         {
             var finder = new TypeFinder();
             return finder.FindTypesOf<IDependencies>(assemblies).Select(c => Create(c.AsType()));

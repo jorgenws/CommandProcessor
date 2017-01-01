@@ -13,7 +13,8 @@ namespace CommandProcessorTests
         [Test]
         public void CreateDependencyFromAssembly()
         {
-            var dependencies = DependenciesFactory.Create(new[] { Assembly.GetExecutingAssembly() });
+            var factory = new DependenciesFactory();
+            var dependencies = factory.Create(new[] { Assembly.GetExecutingAssembly() });
 
             var dependency = dependencies.First();
 

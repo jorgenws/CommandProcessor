@@ -37,7 +37,8 @@ namespace CommandProcessor
             foreach (var commandHandler in commandHandlers)
                 builder.RegisterType(commandHandler).AsSelf();
 
-            var dependencies = DependenciesFactory.Create(_assemblies);
+            var dependenciesFactory = new DependenciesFactory();
+            var dependencies = dependenciesFactory.Create(_assemblies);
 
             foreach (var dependency in dependencies)
                 dependency.Add(builder);
