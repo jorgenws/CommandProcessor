@@ -11,14 +11,14 @@ namespace CommandProcessor
     {
         //TODO:support looking up a combination of handler id and handler type if the same id is used multiple places
         private ConcurrentDictionary<Guid, QueuedCommandHandler> _processingAggregates;
-        private ReadOnlyDictionary<Type, Type> _commandHandlerToCommandMap;
+        private ReadOnlyDictionary<Type, CommandHandlerType> _commandHandlerMap;
         private IContainer _container;
 
-        public Processor(ReadOnlyDictionary<Type,Type> commandHandlerToCommandMap,
+        public Processor(ReadOnlyDictionary<Type,CommandHandlerType> commandHandlerMap,
                          IContainer container)
         {
             _processingAggregates = new ConcurrentDictionary<Guid, QueuedCommandHandler>();
-            _commandHandlerToCommandMap = commandHandlerToCommandMap;
+            _commandHandlerMap = commandHandlerMap;
             _container = container;
         }
 
@@ -74,16 +74,18 @@ namespace CommandProcessor
             return true;
         }
 
-        private ICommandHandler GetCommandHandler(ICommand command)
+        private CommandHandler GetCommandHandler(ICommand command)
         {
             var commandType = command.GetType();
 
-            if (!_commandHandlerToCommandMap.ContainsKey(commandType))
+            if (!_commandHandlerMap.ContainsKey(commandType))
                 throw new HandlerNotFoundException($"The handler for {commandType} is not found");
 
-            var commandHandlerType = _commandHandlerToCommandMap[commandType];
+            var commandHandlerType = _commandHandlerMap[commandType];
 
-            return (ICommandHandler) _container.Resolve(commandHandlerType);
+            var commandHandler = (ICommandHandler)_container.Resolve(commandHandlerType.CommandHandler);
+
+            return new CommandHandler(commandHandler, commandHandlerType.HandleMethods);
         }
     }
 

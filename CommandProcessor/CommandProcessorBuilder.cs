@@ -28,10 +28,11 @@ namespace CommandProcessor
         {
             var builder = new ContainerBuilder();
 
-            var mapFactory = new CommandToHandlerMapFactory();
-            var commandHandlerMap = mapFactory.Create(_assemblies);
+            var commandHandlerTypeFactory = new CommandHandlerMapFactory();
+            var commandHandlerMap = commandHandlerTypeFactory.Create(_assemblies);
 
-            var commandHandlers = commandHandlerMap.Values.Distinct();
+            var commandHandlers = commandHandlerMap.Values.Select(c => c.CommandHandler)
+                                                          .Distinct();
 
             foreach (var commandHandler in commandHandlers)
                 builder.RegisterType(commandHandler).AsSelf();

@@ -7,17 +7,16 @@ using System;
 namespace CommandProcessorTests
 {
     [TestFixture]
-    public class CommandToHandlerMapFactoryTests
+    public class CommandHandlerMapFactoryTests
     {
         [Test]
         public void CreateDictionaryCommandToHandlerMap()
         {
-            var factory = new CommandToHandlerMapFactory();
+            var factory = new CommandHandlerMapFactory();
 
-            var commandToHandlerMap = factory.Create(new[] { Assembly.GetExecutingAssembly() });
+            var commandHandlerMap = factory.Create(new[] { Assembly.GetExecutingAssembly() });
 
-            Assert.IsTrue(commandToHandlerMap.ContainsKey(typeof(TestCommand)));
-            Assert.AreEqual(typeof(TestCommandHandlerWithHandleMethodThatTakesAObjectOfICommand), commandToHandlerMap[typeof(TestCommand)]);
+            Assert.IsTrue(commandHandlerMap.ContainsKey(typeof(TestCommand)));
         }
 
         public class TestCommandHandlerWithHandleMethodThatTakesAObjectOfICommand : ICommandHandler

@@ -48,7 +48,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommandToHandlerMapFactoryTests.cs" />
+    <Compile Include="CommandHandlerTests.cs" />
+    <Compile Include="CommandHandlerMapFactoryTests.cs" />
     <Compile Include="DependenciesFactoryTests.cs" />
     <Compile Include="ProcessorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

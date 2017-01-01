@@ -1,10 +1,5 @@
-﻿using BaseTypes;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
 
 namespace CommandProcessor
 {
@@ -12,45 +7,14 @@ namespace CommandProcessor
     {
         public Guid AggregateId { get; private set; }
         BlockingCollection<CommandTask> _queue;
-        ICommandHandler _handler;
-
-        Dictionary<Type, Action<object, object>> _handlers;
+        CommandHandler _commandHandler;
 
         public QueuedCommandHandler(Guid aggregateId, 
-                                    ICommandHandler handler)
+                                    CommandHandler handler)
         {
             AggregateId = aggregateId;
-            _handler = handler;
+            _commandHandler = handler;
             _queue = new BlockingCollection<CommandTask>();
-            _handlers = new Dictionary<Type, Action<object, object>>();
-            CreateHandlerDelegates();
-        }
-
-        private void CreateHandlerDelegates()
-        {
-
-            var handlerType = _handler.GetType();
-
-            var handleMethods = handlerType.GetTypeInfo().DeclaredMethods.Where(c => c.Name == "Handle" &&
-                                                                                     c.IsPublic &&
-                                                                                     c.GetParameters().Length == 1 &&
-                                                                                     c.GetParameters().First().ParameterType.GetTypeInfo().ImplementedInterfaces.Contains(typeof(ICommand)));
-
-            foreach(var handle in handleMethods)
-            {
-                var parameterType = handle.GetParameters().First().ParameterType;
-
-                var handler = Expression.Parameter(typeof(object), "handler");
-                var argument = Expression.Parameter(typeof(object), "command");
-
-                var methodCall = Expression.Call(Expression.Convert(handler, handlerType),
-                                                 handle,
-                                                 Expression.Convert(argument, parameterType));
-
-                Action<object,object> action = Expression.Lambda<Action<object, object>>(methodCall, handler, argument).Compile();
-
-                _handlers.Add(parameterType, action);
-            }
         }
              
         public bool Enqueue(CommandTask command)
@@ -82,11 +46,9 @@ namespace CommandProcessor
                 if (isTryTakeSuccess)
                 {
                     try
-                    {
-                        var command = commandTask.Command;
-                        Action<object, object> handle = _handlers[command.GetType()];
-                        handle(_handler, command);
-                        commandTask.Finish(true); 
+                    {                     
+                        _commandHandler.Handle(commandTask.Command);
+                        commandTask.Finish(true);
                     }
                     catch (Exception e)
                     {
