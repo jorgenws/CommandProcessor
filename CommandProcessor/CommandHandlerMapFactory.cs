@@ -27,21 +27,17 @@ namespace CommandProcessor
 
         private IEnumerable<Type> GetCommandMethodParameters(TypeInfo commandHandler)
         {
-            return commandHandler.DeclaredMethods.Where(c => c.IsPublic &&
-                                                             c.Name == "Handle" &&
-                                                             c.GetParameters().Length == 1 &&
-                                                             c.GetParameters().First().ParameterType.GetTypeInfo().ImplementedInterfaces.Contains(typeof(ICommand)))
-                                                 .Select(c => c.GetParameters().First().ParameterType.GetTypeInfo().AsType());
+            return commandHandler.DeclaredMethods
+                                 .Where(DoesMethodHandleCommand)
+                                 .Select(c => c.GetParameters().First().ParameterType.GetTypeInfo().AsType());
         }
 
         private Dictionary<Type, Action<object, object>> CreateHandlerDelegates(Type commandHandlerType)
         {
-            return commandHandlerType.GetTypeInfo().DeclaredMethods.Where(c => c.Name == "Handle" &&
-                                                                               c.IsPublic &&
-                                                                               c.GetParameters().Length == 1 &&
-                                                                               c.GetParameters().First().ParameterType.GetTypeInfo().ImplementedInterfaces.Contains(typeof(ICommand)))
-                                                                    .Select(c => new { Command = c.GetParameters().First().ParameterType, HandleMethod = CreateHandleDelegate(commandHandlerType, c) })
-                                                                    .ToDictionary(c => c.Command, c => c.HandleMethod);
+            return commandHandlerType.GetTypeInfo()
+                                     .DeclaredMethods.Where(DoesMethodHandleCommand)
+                                     .Select(c => new { Command = c.GetParameters().First().ParameterType, HandleMethod = CreateHandleDelegate(commandHandlerType, c) })
+                                     .ToDictionary(c => c.Command, c => c.HandleMethod);
         }
 
         private Action<object, object> CreateHandleDelegate(Type commandHandlerType, MethodInfo handle)
@@ -56,6 +52,14 @@ namespace CommandProcessor
                                              Expression.Convert(argument, parameterType));
 
             return Expression.Lambda<Action<object, object>>(methodCall, handler, argument).Compile();
+        }
+
+        private bool DoesMethodHandleCommand(MethodInfo methodInfo)
+        {
+            return methodInfo.IsPublic &&
+                   methodInfo.Name == "Handle" &&
+                   methodInfo.GetParameters().Length == 1 &&
+                   methodInfo.GetParameters().First().ParameterType.GetTypeInfo().ImplementedInterfaces.Contains(typeof(ICommand));
         }
 
     }
