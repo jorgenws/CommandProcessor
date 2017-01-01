@@ -1,6 +1,5 @@
 ﻿using BaseTypes;
 using System;
-using System.Threading.Tasks;
 
 namespace TestHandlers
 {
@@ -8,11 +7,22 @@ namespace TestHandlers
     {
         public void Handle(TestCommand command)
         {
-            Task.Delay(200).Wait();
         }
     }
 
     public class TestCommand : ICommand
+    {
+        public Guid AggregateId { get; set; }
+    }
+
+    public class TestCommandHandler2 : ICommandHandler
+    {
+        public void Handle(TestCommand2 command)
+        {
+        }
+    }
+
+    public class TestCommand2 : ICommand
     {
         public Guid AggregateId { get; set; }
     }

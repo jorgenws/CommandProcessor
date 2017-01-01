@@ -51,6 +51,7 @@
     <Compile Include="CommandHandlerTests.cs" />
     <Compile Include="CommandHandlerMapFactoryTests.cs" />
     <Compile Include="DependenciesFactoryTests.cs" />
+    <Compile Include="PerformanceTesting\Processing.cs" />
     <Compile Include="ProcessorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TypeFinderTests.cs" />
