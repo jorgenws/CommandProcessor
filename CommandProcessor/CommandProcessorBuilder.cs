@@ -11,14 +11,13 @@ namespace CommandProcessor
     {
         private IEnumerable<Assembly> _assemblies;
         private Type _eventStore;
-        private CommandHandlerMapFactory _commandHandlerMapFactory;
+        private HandlerMapFactory _handlerMapFactory;
         private DependenciesFactory _dependenciesFactory;
 
         public CommandProcessorBuilder()
         {
-            _commandHandlerMapFactory = new CommandHandlerMapFactory();
+            _handlerMapFactory = new HandlerMapFactory();
             _dependenciesFactory = new DependenciesFactory();
-
         }
 
         public ISetEventStore AddAssemblies(IEnumerable<Assembly> assemblies)
@@ -37,13 +36,15 @@ namespace CommandProcessor
         {
             var builder = new ContainerBuilder();
 
-            var commandHandlerMap = _commandHandlerMapFactory.Create(_assemblies);
-
-            var commandHandlers = commandHandlerMap.Values.Select(c => c.CommandHandler)
+            var commandHandlerMap = _handlerMapFactory.CreateFromCommandHandler(_assemblies);
+            var commandHandlers = commandHandlerMap.Values.Select(c => c.Handler)
                                                           .Distinct();
 
             foreach (var commandHandler in commandHandlers)
                 builder.RegisterType(commandHandler).AsSelf();
+
+            var eventHandlerMap = _handlerMapFactory.CreateFromAggregate(_assemblies);
+            builder.RegisterInstance(eventHandlerMap).AsSelf();
 
             var dependencies = _dependenciesFactory.Create(_assemblies);
 

@@ -7,35 +7,43 @@ using System.Linq.Expressions;
 using System.Reflection;
 
 namespace CommandProcessor
-{
-    internal class CommandHandlerMapFactory
+{ 
+    internal class HandlerMapFactory
     {
         private TypeFinder _finder;
 
-        public CommandHandlerMapFactory()
+        public HandlerMapFactory()
         {
             _finder = new TypeFinder();
         }
 
-        public ReadOnlyDictionary<Type, CommandHandlerType> Create(IEnumerable<Assembly> assemblies)
+        public ReadOnlyDictionary<Type, HandlerType> CreateFromCommandHandler(IEnumerable<Assembly> assemblies)
         {
             var map = _finder.FindTypesOf<ICommandHandler>(assemblies)
-                             .SelectMany(c => GetCommandMethodParameters(c).Select(d => new { Command = d, Handler = new CommandHandlerType(c.AsType(), new ReadOnlyDictionary<Type, Action<object, object>>(CreateHandlerDelegates(c.AsType()))) }))
+                             .SelectMany(c => GetMethodParameters<ICommand>(c).Select(d => new { Command = d, Handler = new HandlerType(c.AsType(), new ReadOnlyDictionary<Type, Action<object, object>>(CreateHandlerDelegates<ICommand>(c.AsType()))) }))
                              .ToDictionary(c => c.Command, c => c.Handler);
-            return new ReadOnlyDictionary<Type, CommandHandlerType>(map);
+            return new ReadOnlyDictionary<Type, HandlerType>(map);
         }
 
-        private IEnumerable<Type> GetCommandMethodParameters(TypeInfo commandHandler)
+        public ReadOnlyDictionary<Type, ReadOnlyDictionary<Type, Action<object,object>>> CreateFromAggregate(IEnumerable<Assembly> assemblies)
+        {
+            var map = _finder.FindTypesOf<Aggregate>(assemblies)
+                             .Select(c => new { Aggregate = c, Handler = new ReadOnlyDictionary<Type, Action<object, object>>(CreateHandlerDelegates<IEvent>(c.AsType())) })
+                             .ToDictionary(c=>c.Aggregate.AsType(), c=>c.Handler);
+            return new ReadOnlyDictionary<Type, ReadOnlyDictionary<Type, Action<object, object>>>(map);
+        }
+
+        private IEnumerable<Type> GetMethodParameters<T>(TypeInfo commandHandler)
         {
             return commandHandler.DeclaredMethods
-                                 .Where(DoesMethodHandleCommand)
+                                 .Where(DoesMethodHandle<T>)
                                  .Select(c => c.GetParameters().First().ParameterType.GetTypeInfo().AsType());
         }
 
-        private Dictionary<Type, Action<object, object>> CreateHandlerDelegates(Type commandHandlerType)
+        private Dictionary<Type, Action<object, object>> CreateHandlerDelegates<T>(Type commandHandlerType)
         {
             return commandHandlerType.GetTypeInfo()
-                                     .DeclaredMethods.Where(DoesMethodHandleCommand)
+                                     .DeclaredMethods.Where(DoesMethodHandle<T>)
                                      .Select(c => new { Command = c.GetParameters().First().ParameterType, HandleMethod = CreateHandleDelegate(commandHandlerType, c) })
                                      .ToDictionary(c => c.Command, c => c.HandleMethod);
         }
@@ -45,7 +53,7 @@ namespace CommandProcessor
             var parameterType = handle.GetParameters().First().ParameterType;
 
             var handler = Expression.Parameter(typeof(object), "handler");
-            var argument = Expression.Parameter(typeof(object), "command");
+            var argument = Expression.Parameter(typeof(object), "parameter");
 
             var methodCall = Expression.Call(Expression.Convert(handler, commandHandlerType),
                                              handle,
@@ -54,25 +62,25 @@ namespace CommandProcessor
             return Expression.Lambda<Action<object, object>>(methodCall, handler, argument).Compile();
         }
 
-        private bool DoesMethodHandleCommand(MethodInfo methodInfo)
+        private bool DoesMethodHandle<T>(MethodInfo methodInfo)
         {
             return methodInfo.IsPublic &&
                    methodInfo.Name == "Handle" &&
                    methodInfo.GetParameters().Length == 1 &&
-                   methodInfo.GetParameters().First().ParameterType.GetTypeInfo().ImplementedInterfaces.Contains(typeof(ICommand));
+                   methodInfo.GetParameters().First().ParameterType.GetTypeInfo().ImplementedInterfaces.Contains(typeof(T));
         }
 
     }
 
-    internal class CommandHandlerType
+    internal class HandlerType
     {
-        public Type CommandHandler { get; private set; }
+        public Type Handler { get; private set; }
         public ReadOnlyDictionary<Type, Action<object, object>> HandleMethods { get; private set; }
 
-        public CommandHandlerType(Type commandHandler,
-                                  ReadOnlyDictionary<Type, Action<object, object>> handleMethods)
+        public HandlerType(Type handler,
+                           ReadOnlyDictionary<Type, Action<object, object>> handleMethods)
         {
-            CommandHandler = commandHandler;
+            Handler = handler;
             HandleMethods = handleMethods;
         }
     }

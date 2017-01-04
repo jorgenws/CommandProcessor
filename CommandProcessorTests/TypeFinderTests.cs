@@ -27,6 +27,7 @@ namespace CommandProcessorTests
 
             var types = finder.FindTypesOf<TestCommandHandler>(new[] { Assembly.GetExecutingAssembly() });
 
+            CollectionAssert.DoesNotContain(types.ToArray(), typeof(AbstractTestCommandHandler));
             Assert.Contains(typeof(TestCommandHandler).GetTypeInfo(), types.ToArray());
             Assert.Contains(typeof(SpesificTestCommandHandler).GetTypeInfo(), types.ToArray());
         }
@@ -38,12 +39,15 @@ namespace CommandProcessorTests
 
             var types = finder.FindTypesOf<ICommandHandler>(new[] { Assembly.GetExecutingAssembly() });
 
+            CollectionAssert.DoesNotContain(types.ToArray(), typeof(AbstractTestCommandHandler));
             Assert.Contains(typeof(TestCommandHandler).GetTypeInfo(), types.ToArray());
             Assert.Contains(typeof(SpesificTestCommandHandler).GetTypeInfo(), types.ToArray());
         }
     }
 
-    public class TestCommandHandler : ICommandHandler { }
+    public abstract class AbstractTestCommandHandler : ICommandHandler { }
+
+    public class TestCommandHandler : AbstractTestCommandHandler { }
 
     public class SpesificTestCommandHandler : TestCommandHandler
     {

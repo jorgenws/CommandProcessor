@@ -1,4 +1,5 @@
-﻿using CommandProcessor;
+﻿using BaseTypes;
+using CommandProcessor;
 using NUnit.Framework;
 
 namespace CommandProcessorTests
@@ -9,8 +10,8 @@ namespace CommandProcessorTests
         [Test]
         public void CanProcessCommand()
         {
-            var factory = new CommandHandlerMapFactory();
-            var commandHandlerMap = factory.Create(new[] { typeof(TestHandlers.TestCommandHandler).Assembly });
+            var factory = new HandlerMapFactory();
+            var commandHandlerMap = factory.CreateFromCommandHandler(new[] { typeof(TestHandlers.TestCommandHandler).Assembly });
 
             var commandHandlerType = commandHandlerMap[typeof(TestHandlers.TestCommand)];
 

@@ -8,7 +8,9 @@ namespace CommandProcessor
     {
         public IEnumerable<TypeInfo> FindTypesOf<T>(IEnumerable<Assembly> assemblies)
         {
-            return assemblies.SelectMany(c => c.DefinedTypes.Where(d => d.ImplementedInterfaces.Contains(typeof(T))).Union(c.DefinedTypes.Where(d => IsOfTypeRecursivly<T>(d))));
+            return assemblies.SelectMany(c => c.DefinedTypes.Where(d => d.ImplementedInterfaces.Contains(typeof(T))).Union(c.DefinedTypes.Where(d => IsOfTypeRecursivly<T>(d))))
+                             .Where(c => !c.IsAbstract)
+                             .Select(c => c);
         }
 
         private bool IsOfTypeRecursivly<T>(TypeInfo typeInfo)

@@ -12,9 +12,9 @@ namespace CommandProcessorTests
         [Test]
         public void CreateDictionaryCommandToHandlerMap()
         {
-            var factory = new CommandHandlerMapFactory();
+            var factory = new HandlerMapFactory();
 
-            var commandHandlerMap = factory.Create(new[] { Assembly.GetExecutingAssembly() });
+            var commandHandlerMap = factory.CreateFromCommandHandler(new[] { Assembly.GetExecutingAssembly() });
 
             Assert.IsTrue(commandHandlerMap.ContainsKey(typeof(TestCommand)));
         }

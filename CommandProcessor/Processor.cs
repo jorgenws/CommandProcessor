@@ -11,10 +11,10 @@ namespace CommandProcessor
     {
         //TODO:support looking up a combination of handler id and handler type if the same id is used multiple places
         private ConcurrentDictionary<Guid, QueuedCommandHandler> _processingAggregates;
-        private ReadOnlyDictionary<Type, CommandHandlerType> _commandHandlerMap;
+        private ReadOnlyDictionary<Type, HandlerType> _commandHandlerMap;
         private IContainer _container;
 
-        public Processor(ReadOnlyDictionary<Type,CommandHandlerType> commandHandlerMap,
+        public Processor(ReadOnlyDictionary<Type, HandlerType> commandHandlerMap,
                          IContainer container)
         {
             _processingAggregates = new ConcurrentDictionary<Guid, QueuedCommandHandler>();
@@ -83,7 +83,7 @@ namespace CommandProcessor
 
             var commandHandlerType = _commandHandlerMap[commandType];
 
-            var commandHandler = (ICommandHandler)_container.Resolve(commandHandlerType.CommandHandler);
+            var commandHandler = (ICommandHandler)_container.Resolve(commandHandlerType.Handler);
 
             return new CommandHandler(commandHandler, commandHandlerType.HandleMethods);
         }
