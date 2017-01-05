@@ -5,8 +5,17 @@ namespace TestHandlers
 {
     public class TestCommandHandler : ICommandHandler
     {
+        private readonly IAggregateFactory _aggregateFactory;
+
+        public TestCommandHandler(IAggregateFactory aggregateFactory)
+        {
+            _aggregateFactory = aggregateFactory;
+        }
+
         public void Handle(TestCommand command)
         {
+            var aggregate = _aggregateFactory.Create<TestAggregate>(command.AggregateId);
+            aggregate.Handle(command);
         }
     }
 
@@ -28,4 +37,22 @@ namespace TestHandlers
     }
 
     public class DummyEventStore : IEventStore { }
+
+    public class TestAggregate : Aggregate
+    {
+        public void Handle(TestCommand command)
+        {
+
+        }
+
+        public void Handle(TestEvent @event)
+        {
+
+        }
+    }
+
+    public class TestEvent : IEvent
+    {
+
+    }
 }

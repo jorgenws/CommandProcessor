@@ -44,6 +44,11 @@ namespace CommandProcessor
                 builder.RegisterType(commandHandler).AsSelf();
 
             var eventHandlerMap = _handlerMapFactory.CreateFromAggregate(_assemblies);
+
+            var aggregates = eventHandlerMap.Select(c => c.Key);
+            foreach (var aggregate in aggregates)
+                builder.RegisterType(aggregate);
+
             builder.RegisterInstance(eventHandlerMap).AsSelf();
 
             var dependencies = _dependenciesFactory.Create(_assemblies);
@@ -51,6 +56,7 @@ namespace CommandProcessor
             foreach (var dependency in dependencies)
                 dependency.Add(builder);
 
+            builder.RegisterType<AggregateFactory>().As<IAggregateFactory>();
             builder.RegisterType(_eventStore).As<IEventStore>();
 
             var container = builder.Build();

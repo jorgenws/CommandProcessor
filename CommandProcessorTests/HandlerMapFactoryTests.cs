@@ -7,7 +7,7 @@ using System;
 namespace CommandProcessorTests
 {
     [TestFixture]
-    public class CommandHandlerMapFactoryTests
+    public class HandlerMapFactoryTests
     {
         [Test]
         public void CreateDictionaryCommandToHandlerMap()

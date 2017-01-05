@@ -17,6 +17,7 @@ using System.Runtime.InteropServices;
 [assembly: NeutralResourcesLanguage("en")]
 
 [assembly: InternalsVisibleTo("CommandProcessorTests")]
+[assembly: InternalsVisibleTo("BaseTypeTests")]
 
 // Version information for an assembly consists of the following four values:
 //
