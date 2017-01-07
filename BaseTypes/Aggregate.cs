@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace BaseTypes
@@ -9,10 +10,13 @@ namespace BaseTypes
 
         private ReadOnlyDictionary<Type, Action<object, object>> _handleMethods;
 
+        private List<IEvent> _uncommitedEvents;
+
         internal void SetUp(Guid id, ReadOnlyDictionary<Type, Action<object, object>> handleMethods)
         {
             Id = id;
             _handleMethods = handleMethods;
+            _uncommitedEvents = new List<IEvent>();
         }
 
         internal void Handle(object @event)

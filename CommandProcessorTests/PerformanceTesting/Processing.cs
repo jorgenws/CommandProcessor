@@ -32,6 +32,7 @@ namespace CommandProcessorTests.PerformanceTesting
             ICommandProcessorBuilder builder = new CommandProcessorBuilder();
             var processor = builder.AddAssemblies(new[] { typeof(TestHandlers.TestCommandHandler).Assembly })
                                    .SetEventStoreType<DummyEventStore>()
+                                   .SetSnapshotRepository<DummySnapshotRepository>()
                                    .Build();
             
             var before = DateTime.UtcNow;

@@ -1,5 +1,6 @@
 ﻿using BaseTypes;
 using System;
+using System.Collections.Generic;
 
 namespace TestHandlers
 {
@@ -36,7 +37,36 @@ namespace TestHandlers
         public Guid AggregateId { get; set; }
     }
 
-    public class DummyEventStore : IEventStore { }
+    public class DummyEventStore : IEventStore
+    {
+        public IEnumerable<IEvent> GetEventsForAggregate(Guid aggregateId)
+        {
+            return new List<IEvent>();
+        }
+
+        public IEnumerable<IEvent> GetEventsForAggregate(Guid aggregateId, int largerThan)
+        {
+            return new List<IEvent>();
+        }
+
+        public Tuple<bool,int> WriteEvents(List<IEvent> events)
+        {
+            return new Tuple<bool, int>(true, 1);
+        }
+    }
+
+    public class DummySnapshotRepository : ISnapshotRepository
+    {
+        public byte[] Load(string filename)
+        {
+            return new byte[0];
+        }
+
+        public bool Save(string filename, byte[] snapshot)
+        {
+            return true;
+        }
+    }
 
     public class TestAggregate : Aggregate
     {
@@ -53,6 +83,6 @@ namespace TestHandlers
 
     public class TestEvent : IEvent
     {
-
+        public Guid AggragateId { get; }
     }
 }

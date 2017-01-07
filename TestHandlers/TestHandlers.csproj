@@ -45,7 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BaseTypes\BaseTypes.csproj">
-      <Project>{4307f378-c21d-484f-9eb6-c691222ab7e1}</Project>
+      <Project>{a211d3f0-91d7-4003-87cc-9867d3428835}</Project>
       <Name>BaseTypes</Name>
     </ProjectReference>
   </ItemGroup>

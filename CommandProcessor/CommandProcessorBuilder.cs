@@ -7,10 +7,12 @@ using System.Linq;
 
 namespace CommandProcessor
 {
-    public class CommandProcessorBuilder : ICommandProcessorBuilder, ISetEventStore, ICommandProcessorBuild
+    public class CommandProcessorBuilder : ICommandProcessorBuilder, ISetEventStore, ISetSnapshotRepository, ISetFileSnapshotConfiguration, ICommandProcessorBuild
     {
         private IEnumerable<Assembly> _assemblies;
         private Type _eventStore;
+        private Type _snapshotRepository;
+        private string _fileSnapshotConfiguration;
         private HandlerMapFactory _handlerMapFactory;
         private DependenciesFactory _dependenciesFactory;
 
@@ -26,9 +28,27 @@ namespace CommandProcessor
             return this;
         }
 
-        public ICommandProcessorBuild SetEventStoreType<T>() where T : IEventStore
+        public ISetSnapshotRepository SetEventStoreType<T>() where T : IEventStore
         {
             _eventStore = typeof(T);
+            return this;
+        }
+
+        public ICommandProcessorBuild SetSnapshotRepository<T>() where T : ISnapshotRepository
+        {
+            _snapshotRepository = typeof(T);
+            return this;
+        }
+
+        public ISetFileSnapshotConfiguration SetFileSnapshotRepository()
+        {
+            _snapshotRepository = typeof(FileSnapshotRepository);
+            return this;
+        }
+
+        public ICommandProcessorBuild Configuration(string fileSnapshotPath)
+        {
+            _fileSnapshotConfiguration = fileSnapshotPath;
             return this;
         }
 
@@ -58,6 +78,8 @@ namespace CommandProcessor
 
             builder.RegisterType<AggregateFactory>().As<IAggregateFactory>();
             builder.RegisterType(_eventStore).As<IEventStore>();
+            builder.RegisterType(_snapshotRepository).As<ISnapshotRepository>();
+            builder.RegisterInstance(new FileSnapshotRepositoryConfiguration(_fileSnapshotConfiguration)).AsSelf().SingleInstance();
 
             var container = builder.Build();
           
@@ -74,7 +96,18 @@ namespace CommandProcessor
 
     public interface ISetEventStore
     {
-         ICommandProcessorBuild SetEventStoreType<T>() where T : IEventStore;
+         ISetSnapshotRepository SetEventStoreType<T>() where T : IEventStore;
+    }
+
+    public interface ISetSnapshotRepository
+    {
+        ISetFileSnapshotConfiguration SetFileSnapshotRepository();
+        ICommandProcessorBuild SetSnapshotRepository<T>() where T : ISnapshotRepository;
+    }
+
+    public interface ISetFileSnapshotConfiguration
+    {
+        ICommandProcessorBuild Configuration(string fileSnapshotPath);
     }
 
     public interface ICommandProcessorBuild

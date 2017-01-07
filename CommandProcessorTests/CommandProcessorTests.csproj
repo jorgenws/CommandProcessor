@@ -69,11 +69,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BaseTypes\BaseTypes.csproj">
-      <Project>{4307f378-c21d-484f-9eb6-c691222ab7e1}</Project>
+      <Project>{a211d3f0-91d7-4003-87cc-9867d3428835}</Project>
       <Name>BaseTypes</Name>
     </ProjectReference>
     <ProjectReference Include="..\CommandProcessor\CommandProcessor.csproj">
-      <Project>{b044eb01-367b-4eb3-9ae5-27f86ce4c410}</Project>
+      <Project>{c4b23162-5ec5-4279-815b-0086c564760f}</Project>
       <Name>CommandProcessor</Name>
     </ProjectReference>
     <ProjectReference Include="..\TestHandlers\TestHandlers.csproj">

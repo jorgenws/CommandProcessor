@@ -1,4 +1,9 @@
-﻿namespace BaseTypes
+﻿using System;
+
+namespace BaseTypes
 {
-    public interface IEvent {}
+    public interface IEvent
+    {
+        Guid AggragateId { get; }
+    }
 }

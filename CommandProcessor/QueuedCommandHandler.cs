@@ -41,7 +41,15 @@ namespace CommandProcessor
             while (!_queue.IsCompleted)
             {
                 CommandTask commandTask;
-                bool isTryTakeSuccess = _queue.TryTake(out commandTask, 100); //Make timeout configurable?
+
+                bool isTryTakeSuccess = false;
+                try
+                {
+                    isTryTakeSuccess = _queue.TryTake(out commandTask, 100); //Make timeout configurable?
+                }catch(Exception e)
+                {
+                    throw e;
+                }
 
                 if (isTryTakeSuccess)
                 {

@@ -16,12 +16,15 @@ namespace CommandProcessorTests
 
             var processor = builder.AddAssemblies(new[] { assembly })
                             .SetEventStoreType<DummyEventStore>()
+                            .SetSnapshotRepository<DummySnapshotRepository>()
                             .Build();
 
             var command = new TestCommand();
             var commandTask = processor.Process(command);
 
             commandTask.Wait();
+
+            processor.Dispose();
 
             Assert.IsTrue(commandTask.Result);
         }
