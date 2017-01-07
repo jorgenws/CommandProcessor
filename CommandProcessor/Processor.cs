@@ -13,6 +13,7 @@ namespace CommandProcessor
         private ConcurrentDictionary<Guid, QueuedCommandHandler> _processingHandler;
         private ReadOnlyDictionary<Type, HandlerType> _commandHandlerMap;
         private IContainer _container;
+        private bool _isDisposing = false;
 
         public Processor(ReadOnlyDictionary<Type, HandlerType> commandHandlerMap,
                          IContainer container)
@@ -24,6 +25,13 @@ namespace CommandProcessor
 
         public Task<bool> Process(ICommand command)
         {
+            if (_isDisposing)
+            {
+                var task = new TaskCompletionSource<bool>();
+                task.SetException(new ProcessorIsDisposingException("Is disposing the processor"));
+                return task.Task;
+            }
+
             var tcs = new TaskCompletionSource<bool>();
             var commandTask = new CommandTask(command, tcs);
 
@@ -90,12 +98,12 @@ namespace CommandProcessor
 
         public void Dispose()
         {
-            //Look at killing the tasks if the timeout is exceded 
-            //without the _proccessingHandler.IsEmpty returning true;
+            _isDisposing = true;
 
             const int MaxWaitTime = 1000;
             const int IntervalWaitTime = 10;
             int accumulatedWaitTime = 0;
+
             while (!_processingHandler.IsEmpty && accumulatedWaitTime < MaxWaitTime)
             {
                 Task.Delay(IntervalWaitTime).Wait();
@@ -112,5 +120,10 @@ namespace CommandProcessor
     public class HandlerNotFoundException : Exception
     {
         public HandlerNotFoundException(string message) : base(message) { }
+    }
+
+    public class ProcessorIsDisposingException : Exception
+    {
+        public ProcessorIsDisposingException(string message) : base(message) { }
     }
 }

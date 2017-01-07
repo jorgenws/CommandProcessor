@@ -15,8 +15,10 @@ namespace TestHandlers
 
         public void Handle(TestCommand command)
         {
-            var aggregate = _aggregateFactory.Create<TestAggregate>(command.AggregateId);
-            aggregate.Handle(command);
+            using (var aggregate = _aggregateFactory.Create<TestAggregate>(command.AggregateId))
+            {
+                aggregate.Handle(command);
+            }            
         }
     }
 

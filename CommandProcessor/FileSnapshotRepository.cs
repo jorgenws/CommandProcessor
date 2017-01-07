@@ -20,13 +20,14 @@ namespace CommandProcessor
 
         public bool Save(string filename, byte[] snapshot)
         {
+            var fullPath = Path.Combine(_configuration.Path, filename);
             try
-            {
-                var fullPath = Path.Combine(_configuration.Path, filename);
+            {                
                 File.WriteAllBytes(fullPath, snapshot);
             }
             catch(Exception e)
             {
+                File.Delete(fullPath);
                 return false;
             }
 

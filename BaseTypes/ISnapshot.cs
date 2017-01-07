@@ -15,4 +15,9 @@ namespace BaseTypes
         byte[] Load(string filename);
         bool Save(string filename, byte[] snapshot);
     }
+
+    public interface ISnapshotFileNameBuilder
+    {
+        string Build(Type aggregateType, Guid aggregateId);
+    }
 }

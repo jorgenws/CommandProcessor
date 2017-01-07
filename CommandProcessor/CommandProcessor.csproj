@@ -53,6 +53,7 @@
     <Compile Include="Processor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueuedCommandHandler.cs" />
+    <Compile Include="SnapshotFileNameBuilder.cs" />
     <Compile Include="TypeFinder.cs" />
   </ItemGroup>
   <ItemGroup>

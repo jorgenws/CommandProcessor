@@ -9,16 +9,19 @@ namespace BaseTypes
         private IComponentContext _resolver;
         private IEventStore _eventStore;
         private ISnapshotRepository _snapshotRepository;
+        private ISnapshotFileNameBuilder _snapshotFileNameBuilder;
         private ReadOnlyDictionary<Type, ReadOnlyDictionary<Type, Action<object, object>>> _handlerTypes;
 
         public AggregateFactory(IComponentContext resolver,
                                 IEventStore eventStore,
                                 ISnapshotRepository snapshotRepository,
+                                ISnapshotFileNameBuilder snapshotFileNameBuilder,
                                 ReadOnlyDictionary<Type, ReadOnlyDictionary<Type, Action<object, object>>> handlerTypes)
         {
             _resolver = resolver;
             _eventStore = eventStore;
             _snapshotRepository = snapshotRepository;
+            _snapshotFileNameBuilder = snapshotFileNameBuilder;
             _handlerTypes = handlerTypes;
         }
 
@@ -26,11 +29,10 @@ namespace BaseTypes
         {
             var aggregate = _resolver.Resolve<T>();
             var handleMethods = _handlerTypes[typeof(T)];
-            aggregate.SetUp(id, handleMethods);
+            aggregate.SetUp(id, handleMethods, _eventStore);
 
             if (aggregate is ISnapshot)
-                LoadSnapshot(aggregate as ISnapshot);
-                
+                LoadSnapshot(aggregate as ISnapshot);                
 
             foreach (IEvent @event in _eventStore.GetEventsForAggregate(id))
                 aggregate.Handle(@event);
@@ -40,8 +42,8 @@ namespace BaseTypes
 
         private void LoadSnapshot(ISnapshot snapshotAggregate)
         {
-            string filename = $"{snapshotAggregate.Id.ToString("D")}-{typeof(ISnapshot)}"; //Move to a centeralized place to avoid duplication (handling retrival)       
-            var snapshot = _snapshotRepository.Load(filename);
+            var fileName = _snapshotFileNameBuilder.Build(snapshotAggregate.GetType(), snapshotAggregate.Id);
+            var snapshot = _snapshotRepository.Load(fileName);
             snapshotAggregate.LoadSnapshot(snapshot);
         }
     }
