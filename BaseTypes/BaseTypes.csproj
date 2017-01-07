@@ -52,7 +52,7 @@
     <Compile Include="IDependencies.cs" />
     <Compile Include="IEvent.cs" />
     <Compile Include="IEventStore.cs" />
-    <Compile Include="ISnapshot.cs" />
+    <Compile Include="ISnapshotRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
