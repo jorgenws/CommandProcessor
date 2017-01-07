@@ -9,6 +9,8 @@ namespace CommandProcessor
         BlockingCollection<CommandTask> _queue;
         CommandHandler _commandHandler;
 
+        public int CurrentQueueSize { get { return _queue.Count; } }
+
         public QueuedCommandHandler(Guid aggregateId, 
                                     CommandHandler handler)
         {

@@ -3,6 +3,7 @@ using BaseTypes;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CommandProcessor
@@ -104,11 +105,27 @@ namespace CommandProcessor
             const int IntervalWaitTime = 10;
             int accumulatedWaitTime = 0;
 
-            while (!_processingHandler.IsEmpty && accumulatedWaitTime < MaxWaitTime)
+            int previousNumberOfCommandsLeftToBeProcessed = CurrentNumberOfCommandsLeftToBeProccesed();
+            int currentNumberOfCommandsLeftToBeProcessed;
+
+            while (!_processingHandler.IsEmpty || accumulatedWaitTime < MaxWaitTime)
             {
                 Task.Delay(IntervalWaitTime).Wait();
                 accumulatedWaitTime += IntervalWaitTime;
+
+                //There might be a very long queue to process. Given that the queue is progressing we keep going.
+                currentNumberOfCommandsLeftToBeProcessed = CurrentNumberOfCommandsLeftToBeProccesed();
+                if (currentNumberOfCommandsLeftToBeProcessed < previousNumberOfCommandsLeftToBeProcessed)
+                {
+                    previousNumberOfCommandsLeftToBeProcessed = currentNumberOfCommandsLeftToBeProcessed;
+                    accumulatedWaitTime = 0;
+                }
             }
+        }
+
+        private int CurrentNumberOfCommandsLeftToBeProccesed()
+        {
+            return _processingHandler.Values.Sum(c => c.CurrentQueueSize);
         }
     }
 
