@@ -59,9 +59,9 @@ namespace TestHandlers
 
     public class DummySnapshotRepository : ISnapshotRepository
     {
-        public byte[] Load(string filename)
+        public Tuple<byte[],int> Load(string filename)
         {
-            return new byte[0];
+            return new Tuple<byte[], int>(new byte[0], 0);
         }
 
         public bool Save(string filename, byte[] snapshot)

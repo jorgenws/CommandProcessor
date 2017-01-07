@@ -13,9 +13,18 @@ namespace CommandProcessor
             _configuration = configuration;
         }
 
-        public byte[] Load(string filename)
+        public Tuple<byte[], int> Load(string filename)
         {
-            return File.ReadAllBytes(filename);
+            if (File.Exists(filename))
+            {
+                byte[] bytes = File.ReadAllBytes(filename);
+                //TODO
+                //Deserialize int a Tuple<byte[],int>
+                //Should probably make an actual type for it...
+                //Item1 and item2 looks stupid
+            }
+
+            return new Tuple<byte[], int>(new byte[0], 0);
         }
 
         public bool Save(string filename, byte[] snapshot)
@@ -25,7 +34,7 @@ namespace CommandProcessor
             {                
                 File.WriteAllBytes(fullPath, snapshot);
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 File.Delete(fullPath);
                 return false;
