@@ -36,12 +36,12 @@ namespace BaseTypes
 
         public override void Dispose()
         {
-            base.Dispose();
+            var lastWrittenEventId = WriteEvents();
 
             if (_numberOfEventsLoaded > 1000)
             {
                 byte[] snapshot = SaveAsSnapshot();
-                var persistableSnapshot = new PersitableSnapshot(LastWrittenEventId, snapshot);
+                var persistableSnapshot = new PersitableSnapshot(lastWrittenEventId, snapshot);
                 _snapshotRepository.Save(BuildSnapshotName(), persistableSnapshot);
             }
         }
@@ -55,7 +55,6 @@ namespace BaseTypes
     public abstract class Aggregate : IDisposable
     {
         public Guid Id { get; private set; }
-        internal int LastWrittenEventId { get; private set; }
 
         private ReadOnlyDictionary<Type, Action<object, object>> _handleMethods;
         internal IEventStore _eventStore;
@@ -89,9 +88,14 @@ namespace BaseTypes
 
         public virtual void Dispose()
         {
+
+        }
+
+        internal int WriteEvents()
+        {
             var result = _eventStore.WriteEvents(_uncommitedEvents);
             if (result.Success)
-                LastWrittenEventId = result.LastWrittenEventId;
+                return result.LastWrittenEventId;
             else
                 throw new EventStoreWriteException();
         }
