@@ -38,10 +38,10 @@ namespace BaseTypes
         {
             var lastWrittenEventId = WriteEvents();
 
-            if (_numberOfEventsLoaded > 1000)
+            if (_numberOfEventsLoaded > 1000) //config?
             {
                 byte[] snapshot = SaveAsSnapshot();
-                var persistableSnapshot = new PersitableSnapshot(lastWrittenEventId, snapshot);
+                var persistableSnapshot = new PersitableSnapshot { SnapshotFromId = lastWrittenEventId, Snapshot = snapshot };
                 _snapshotRepository.Save(BuildSnapshotName(), persistableSnapshot);
             }
         }

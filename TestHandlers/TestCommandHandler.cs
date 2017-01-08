@@ -61,7 +61,7 @@ namespace TestHandlers
     {
         public PersitableSnapshot Load(string filename)
         {
-            return new PersitableSnapshot(0, new byte[0]);
+            return new PersitableSnapshot { SnapshotFromId = 0, Snapshot = new byte[0] };
         }
 
         public bool Save(string filename, PersitableSnapshot snapshotResult)

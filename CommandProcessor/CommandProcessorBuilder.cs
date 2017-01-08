@@ -79,6 +79,7 @@ namespace CommandProcessor
             builder.RegisterType<AggregateFactory>().As<IAggregateFactory>();
             builder.RegisterType(_eventStore).As<IEventStore>();
             builder.RegisterType(_snapshotRepository).As<ISnapshotRepository>();
+            builder.RegisterType<BinarySnapshotSerializer>().As<IBinarySnapshotSerializer>().SingleInstance();
             builder.RegisterInstance(new FileSnapshotRepositoryConfiguration(_fileSnapshotConfiguration)).AsSelf().SingleInstance();
 
             var container = builder.Build();

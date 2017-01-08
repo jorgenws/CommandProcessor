@@ -47,6 +47,7 @@
     <Compile Include="Aggregate.cs" />
     <Compile Include="AggregateFactory.cs" />
     <Compile Include="EventStoreWriteException.cs" />
+    <Compile Include="IBinarySnapshotSerializer.cs" />
     <Compile Include="ICommand.cs" />
     <Compile Include="ICommandHandler.cs" />
     <Compile Include="IDependencies.cs" />

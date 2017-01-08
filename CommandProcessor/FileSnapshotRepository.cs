@@ -7,10 +7,13 @@ namespace CommandProcessor
     public class FileSnapshotRepository : ISnapshotRepository
     {
         private readonly FileSnapshotRepositoryConfiguration _configuration;
+        private readonly IBinarySnapshotSerializer _binarySnapshotSerializer;
 
-        public FileSnapshotRepository(FileSnapshotRepositoryConfiguration configuration)
+        public FileSnapshotRepository(FileSnapshotRepositoryConfiguration configuration,
+                                      IBinarySnapshotSerializer binarySnapshotSerializer)
         {
             _configuration = configuration;
+            _binarySnapshotSerializer = binarySnapshotSerializer;
         }
 
         public PersitableSnapshot Load(string filename)
@@ -18,11 +21,10 @@ namespace CommandProcessor
             if (File.Exists(filename))
             {
                 byte[] bytes = File.ReadAllBytes(filename);
-                //TODO
-                //Deserialize int a SnapshotResult
+                return _binarySnapshotSerializer.Deserialize(bytes);
             }
 
-            return new PersitableSnapshot(0, new byte[0]);
+            return new PersitableSnapshot { SnapshotFromId = 0, Snapshot = new byte[0] };
         }
 
         public bool Save(string filename, PersitableSnapshot persistableSnapshot)
@@ -30,9 +32,8 @@ namespace CommandProcessor
             var fullPath = Path.Combine(_configuration.Path, filename);
             try
             {
-                //TODO
-                //Serialize persistableSnapshot into byte[]
-                File.WriteAllBytes(fullPath, new byte[0]);
+                byte[] serializedSnapshot =_binarySnapshotSerializer.Serialize(persistableSnapshot);
+                File.WriteAllBytes(fullPath, serializedSnapshot);
             }
             catch(Exception)
             {
