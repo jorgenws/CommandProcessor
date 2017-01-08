@@ -13,26 +13,26 @@ namespace CommandProcessor
             _configuration = configuration;
         }
 
-        public Tuple<byte[], int> Load(string filename)
+        public PersitableSnapshot Load(string filename)
         {
             if (File.Exists(filename))
             {
                 byte[] bytes = File.ReadAllBytes(filename);
                 //TODO
-                //Deserialize int a Tuple<byte[],int>
-                //Should probably make an actual type for it...
-                //Item1 and item2 looks stupid
+                //Deserialize int a SnapshotResult
             }
 
-            return new Tuple<byte[], int>(new byte[0], 0);
+            return new PersitableSnapshot(0, new byte[0]);
         }
 
-        public bool Save(string filename, byte[] snapshot)
+        public bool Save(string filename, PersitableSnapshot persistableSnapshot)
         {
             var fullPath = Path.Combine(_configuration.Path, filename);
             try
-            {                
-                File.WriteAllBytes(fullPath, snapshot);
+            {
+                //TODO
+                //Serialize persistableSnapshot into byte[]
+                File.WriteAllBytes(fullPath, new byte[0]);
             }
             catch(Exception)
             {

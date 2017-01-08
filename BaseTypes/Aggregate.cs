@@ -21,10 +21,10 @@ namespace BaseTypes
 
         internal override void LoadState()
         {
-            Tuple<byte[], int> snapshotAndHighestEventId = _snapshotRepository.Load(BuildSnapshotName());
-            LoadFromSnapshot(snapshotAndHighestEventId.Item1);
+            PersitableSnapshot snapshotAndHighestEventId = _snapshotRepository.Load(BuildSnapshotName());
+            LoadFromSnapshot(snapshotAndHighestEventId.Snapshot);
 
-            foreach (var @event in _eventStore.GetEventsForAggregate(Id, snapshotAndHighestEventId.Item2))
+            foreach (var @event in _eventStore.GetEventsForAggregate(Id, snapshotAndHighestEventId.SnapshotFromId)) //id +1?
             {
                 Handle(@event);
                 _numberOfEventsLoaded++;
@@ -41,7 +41,8 @@ namespace BaseTypes
             if (_numberOfEventsLoaded > 1000)
             {
                 byte[] snapshot = SaveAsSnapshot();
-                _snapshotRepository.Save(BuildSnapshotName(), snapshot);
+                var persistableSnapshot = new PersitableSnapshot(LastWrittenEventId, snapshot);
+                _snapshotRepository.Save(BuildSnapshotName(), persistableSnapshot);
             }
         }
 
@@ -54,6 +55,7 @@ namespace BaseTypes
     public abstract class Aggregate : IDisposable
     {
         public Guid Id { get; private set; }
+        internal int LastWrittenEventId { get; private set; }
 
         private ReadOnlyDictionary<Type, Action<object, object>> _handleMethods;
         internal IEventStore _eventStore;
@@ -88,8 +90,10 @@ namespace BaseTypes
         public virtual void Dispose()
         {
             var result = _eventStore.WriteEvents(_uncommitedEvents);
-            if (!result.Item1)
-                throw new EventStoreWriteException();            
+            if (result.Item1)
+                LastWrittenEventId = result.Item2;
+            else
+                throw new EventStoreWriteException();
         }
     }
 }

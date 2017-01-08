@@ -59,12 +59,12 @@ namespace TestHandlers
 
     public class DummySnapshotRepository : ISnapshotRepository
     {
-        public Tuple<byte[],int> Load(string filename)
+        public PersitableSnapshot Load(string filename)
         {
-            return new Tuple<byte[], int>(new byte[0], 0);
+            return new PersitableSnapshot(0, new byte[0]);
         }
 
-        public bool Save(string filename, byte[] snapshot)
+        public bool Save(string filename, PersitableSnapshot snapshotResult)
         {
             return true;
         }
