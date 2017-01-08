@@ -51,9 +51,9 @@ namespace TestHandlers
             return new List<IEvent>();
         }
 
-        public Tuple<bool,int> WriteEvents(List<IEvent> events)
+        public WriteEventsResult WriteEvents(List<IEvent> events)
         {
-            return new Tuple<bool, int>(true, 1);
+            return new WriteEventsResult(true, 0);
         }
     }
 

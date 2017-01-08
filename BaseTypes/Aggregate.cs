@@ -90,8 +90,8 @@ namespace BaseTypes
         public virtual void Dispose()
         {
             var result = _eventStore.WriteEvents(_uncommitedEvents);
-            if (result.Item1)
-                LastWrittenEventId = result.Item2;
+            if (result.Success)
+                LastWrittenEventId = result.LastWrittenEventId;
             else
                 throw new EventStoreWriteException();
         }

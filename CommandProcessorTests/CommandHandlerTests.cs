@@ -22,7 +22,7 @@ namespace CommandProcessorTests
 
             _eventStore = new Mock<IEventStore>();
             _eventStore.Setup(c => c.WriteEvents(It.IsAny<List<IEvent>>()))
-                       .Returns(new Tuple<bool, int>(true, 1));
+                       .Returns(new WriteEventsResult(true, 1));
 
             var testAggregate = new TestAggregate();
             testAggregate.SetUp(command.AggregateId, new ReadOnlyDictionary<Type, Action<object, object>>(new Dictionary<Type, Action<object, object>>()), _eventStore.Object);
