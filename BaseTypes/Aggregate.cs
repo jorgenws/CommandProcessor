@@ -10,13 +10,13 @@ namespace BaseTypes
 
         private int _numberOfEventsLoaded = 0;
 
-        internal void SetUp(Guid id, 
-                            ReadOnlyDictionary<Type, Action<object, object>> handleMethods, 
-                            IEventStore eventStore, 
-                            ISnapshotRepository snapshotRepository)
+        internal override void SetUp(Guid id, 
+                                     ReadOnlyDictionary<Type, Action<object, object>> handleMethods, 
+                                     IEventStore eventStore, 
+                                     ISnapshotRepository snapshotRepository)
         {
             _snapshotRepository = snapshotRepository;
-            SetUp(id, handleMethods, eventStore);
+            base.SetUp(id, handleMethods, eventStore, snapshotRepository);
         }
 
         internal override void LoadState()
@@ -60,7 +60,10 @@ namespace BaseTypes
         internal IEventStore _eventStore;
         private List<IEvent> _uncommitedEvents;
 
-        internal void SetUp(Guid id, ReadOnlyDictionary<Type, Action<object, object>> handleMethods, IEventStore eventStore)
+        internal virtual void SetUp(Guid id, 
+                                    ReadOnlyDictionary<Type, Action<object, object>> handleMethods, 
+                                    IEventStore eventStore, 
+                                    ISnapshotRepository snapshotRepository)
         {
             Id = id;
             _handleMethods = handleMethods;

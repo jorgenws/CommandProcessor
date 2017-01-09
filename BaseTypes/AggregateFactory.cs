@@ -27,10 +27,8 @@ namespace BaseTypes
             var aggregate = _resolver.Resolve<T>();
             var handleMethods = _handlerTypes[typeof(T)];
 
-            if (aggregate is SnapshotableAggregate)
-                (aggregate as SnapshotableAggregate).SetUp(id, handleMethods, _eventStore, _snapshotRepository);
-            else
-                aggregate.SetUp(id, handleMethods, _eventStore);
+            //I wish is had a better solution for this
+            aggregate.SetUp(id, handleMethods, _eventStore, _snapshotRepository);
 
             aggregate.LoadState();
 
