@@ -91,14 +91,17 @@ namespace BaseTypes
 
         public virtual void Dispose()
         {
-
+            WriteEvents();
         }
 
         internal int WriteEvents()
         {
             var result = _eventStore.WriteEvents(_uncommitedEvents);
             if (result.Success)
+            {
+                _uncommitedEvents.Clear();
                 return result.LastWrittenEventId;
+            }
             else
                 throw new EventStoreWriteException();
         }

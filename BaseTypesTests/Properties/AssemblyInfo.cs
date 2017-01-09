@@ -5,17 +5,14 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("CommandProcessor")]
+[assembly: AssemblyTitle("BaseTypesTests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("CommandProcessor")]
+[assembly: AssemblyProduct("BaseTypesTests")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-
-[assembly: InternalsVisibleTo("CommandProcessorTests")]
-[assembly: InternalsVisibleTo("BaseTypesTests")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -23,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("c4b23162-5ec5-4279-815b-0086c564760f")]
+[assembly: Guid("9dded8fc-4ef0-4ad0-ab59-1ef1e9482561")]
 
 // Version information for an assembly consists of the following four values:
 //
