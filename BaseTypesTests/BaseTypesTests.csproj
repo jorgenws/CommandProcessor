@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="AggregateTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SnapshotableAggregateTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BaseTypes\BaseTypes.csproj">

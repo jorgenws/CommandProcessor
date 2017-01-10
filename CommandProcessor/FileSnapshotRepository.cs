@@ -24,7 +24,7 @@ namespace CommandProcessor
                 return _binarySnapshotSerializer.Deserialize(bytes);
             }
 
-            return new PersitableSnapshot { SnapshotFromId = 0, Snapshot = new byte[0] };
+            return new PersitableSnapshot { SnapshotFromId = -1, Snapshot = new byte[0] };
         }
 
         public bool Save(string filename, PersitableSnapshot persistableSnapshot)
